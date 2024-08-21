@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CompilerSliceStateType, updateCurrentLanguage } from '@/redux/slices/compilerSlice';
 import { RootState } from '@/redux/store';
 import { handleError } from '@/utils/handleError';
-import axios from "axios";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
@@ -23,12 +22,13 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from 'sonner';
+import { useSaveCodeMutation } from '@/redux/slices/api';
 
 export default function HelperHeader() {
-    const [saveLoading, setSaveLoading] = useState<boolean>(false);
     const [shareBtn, setShareBtn] = useState<boolean>(false);
     const navigate = useNavigate()
-    const fullCode = useSelector((state: RootState) => state.compilerSlice.fullCode)
+    const fullCode = useSelector((state: RootState) => state.compilerSlice.fullCode);
+    const [saveCode, { isLoading }] = useSaveCodeMutation();
 
     const { urlId } = useParams();
     useEffect(() => {
@@ -40,17 +40,11 @@ export default function HelperHeader() {
     }, [urlId]);
 
     const handleSaveCode = async () => {
-        setSaveLoading(true);
         try {
-            const response = await axios.post("http://localhost:3000/compiler/save", {
-                fullCode: fullCode,
-            });
-            // console.log(response.data)
-            navigate(`/compiler/${response.data.url}`, { replace: true })
+            const response = await saveCode(fullCode).unwrap();
+            navigate(`/compiler/${response.url}`, { replace: true })
         } catch (error) {
             handleError(error);
-        } finally {
-            setSaveLoading(false);
         }
     }
 
@@ -63,9 +57,9 @@ export default function HelperHeader() {
                     onClick={handleSaveCode}
                     variant="succes"
                     className='flex items-center justify-center gap-1'
-                    disabled={saveLoading}
+                    disabled={isLoading}
                 >
-                    {saveLoading ? <><LoaderCircle size={16} className='animate-spin' /> Saving</> : <><Save size={16} />Save</>}
+                    {isLoading ? <><LoaderCircle size={16} className='animate-spin' /> Saving</> : <><Save size={16} />Save</>}
                 </Button>
 
                 {shareBtn &&
@@ -99,7 +93,7 @@ export default function HelperHeader() {
                                                 // toast(<CircleCheck />, (`URL copied to your Clipboard`))
                                                 toast(
                                                     <>
-                                                        <CircleCheck className='text-green-600'/>
+                                                        <CircleCheck className='text-green-600' />
                                                         URL copied to your Clipboard
                                                     </>
                                                 );

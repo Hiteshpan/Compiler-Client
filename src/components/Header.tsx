@@ -7,10 +7,20 @@ export default function Header() {
             <Link to="/">
                 <h1 className="font-bold select-none text-lg p-2 border border-transparent hover:border-white rounded-sm">WD Compiler</h1>
             </Link>
-            <ul>
+            <ul className="flex gap-2">
                 <li>
                     <Link to="/compiler">
                        <Button variant="secondary" className="p-5 text-lg font-medium">Compiler</Button>
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/login">
+                       <Button variant="blue" className="p-5 text-lg font-medium">Login</Button>
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/signup">
+                       <Button variant="blue" className="p-5 text-lg font-medium">Signup</Button>
                     </Link>
                 </li>
             </ul>

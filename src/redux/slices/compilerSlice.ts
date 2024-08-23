@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction } from "@reduxjs/toolkit/react";
 
 export interface CompilerSliceStateType {
     fullCode: {
@@ -7,7 +8,8 @@ export interface CompilerSliceStateType {
         javascript: string;
     };
     currentLanguage: "html" | "css" | "javascript";
-};
+    isOwner: boolean;
+}
 
 const initialState: CompilerSliceStateType = {
     fullCode: {
@@ -140,21 +142,28 @@ li.completed {
         `,
     },
     currentLanguage: "html",
+    isOwner: false,
 };
 
 const compilerSlice = createSlice({
     name: "compilerSlice",
     initialState,
     reducers: {
-        updateCurrentLanguage: (state, action: PayloadAction<CompilerSliceStateType["currentLanguage"]>) => {
+        updateCurrentLanguage: (
+            state,
+            action: PayloadAction<CompilerSliceStateType["currentLanguage"]>
+        ) => {
             state.currentLanguage = action.payload;
         },
-        updateCodeValue: (
-            state,
-            action: PayloadAction<string>) => {
+        updateCodeValue: (state, action: PayloadAction<string>) => {
             state.fullCode[state.currentLanguage] = action.payload;
         },
-        updateFullCode: (state, action: PayloadAction<CompilerSliceStateType["fullCode"]>
+        updateIsOwner: (state, action: PayloadAction<boolean>) => {
+            state.isOwner = action.payload;
+        },
+        updateFullCode: (
+            state,
+            action: PayloadAction<CompilerSliceStateType["fullCode"]>
         ) => {
             state.fullCode = action.payload;
         },
@@ -162,4 +171,9 @@ const compilerSlice = createSlice({
 });
 
 export default compilerSlice.reducer;
-export const { updateCurrentLanguage, updateCodeValue, updateFullCode } = compilerSlice.actions;
+export const {
+    updateCurrentLanguage,
+    updateCodeValue,
+    updateFullCode,
+    updateIsOwner,
+} = compilerSlice.actions;

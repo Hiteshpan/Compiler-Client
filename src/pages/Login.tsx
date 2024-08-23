@@ -1,17 +1,21 @@
-import "./pageStyles/grid.css"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Button } from "@/components/ui/button"
+import "./pageStyles/grid.css";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
     FormField,
     FormItem,
     FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Link } from 'react-router-dom';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginMutation } from "@/redux/slices/api";
+import { handleError } from "@/utils/handleError";
+import { useDispatch } from "react-redux";
+import { updateCurrentUser, updateIsLoggedIn } from "@/redux/slices/appSlice";
 
 const formSchema = z.object({
     userId: z.string(),
@@ -19,58 +23,88 @@ const formSchema = z.object({
 });
 
 export default function Login() {
-
-    // 1. Define your form.
+    const [login, { isLoading }] = useLoginMutation();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             userId: "",
             password: "",
         },
-    })
+    });
 
-    // 2. Define a submit handler.
-    function handleLogin(values: z.infer<typeof formSchema>) {
-        console.log(values)
+    async function handleLogin(values: z.infer<typeof formSchema>) {
+        try {
+            const response = await login(values).unwrap();
+            dispatch(updateCurrentUser(response));
+            dispatch(updateIsLoggedIn(true));
+            navigate("/");
+        } catch (error) {
+            handleError(error);
+        }
     }
 
     return (
-        <div className='__login grid-bg w-full h-[calc(100dvh-60px)] flex items-center justify-center'>
-            <div className=' w-[24%] h-fit flex flex-col items-center justify-center gap-3 py-10 px-2 border-[1px] border-slate-800 rounded bg-black'>
-                <h1 className='text-6xl font-mono'>Login</h1>
-                <p className='text-base mt-2 font-mono w-[85%] text-center'>Welcome back fellow coder😁</p>
+        <div className="__login grid-bg w-full h-[calc(100dvh-60px)] flex justify-center items-center flex-col gap-3">
+            <div className="__form_container bg-black border-[1px] py-8 px-4 flex flex-col gap-5 w-[300px]">
+                <div className="">
+                    <h1 className="font-mono text-4xl font-bold text-left">Login</h1>
+                    <p className="font-mono text-xs">Welcome back fellow coder 😁</p>
+                </div>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-4 w-[80%]">
+                    <form
+                        onSubmit={form.handleSubmit(handleLogin)}
+                        className="flex flex-col gap-2"
+                    >
                         <FormField
                             control={form.control}
                             name="userId"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input className='w-full pr-12 py-5 text-left font-mono' placeholder="Username or Email" {...field} />
+                                        <Input
+                                            required
+                                            disabled={isLoading}
+                                            placeholder="Username or Email"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-
                         <FormField
                             control={form.control}
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input className='w-full pr-12 py-5 text-left font-mono' type='password' placeholder="Password" {...field} />
+                                        <Input
+                                            required
+                                            disabled={isLoading}
+                                            type="password"
+                                            placeholder="Password"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <Button className='w-full py-5 text-lg font-mono' type="submit">Login</Button>
+                        <Button loading={isLoading} className="w-full" type="submit">
+                            Login
+                        </Button>
                     </form>
                 </Form>
-                <small className="font-mono mt-2">Don't have an account? <Link className="hover:text-blue-500 hover:underline" to="/signup">Signup</Link></small>
+                <small className="text-xs font-mono">
+                    Don't have an account?{" "}
+                    <Link className=" text-blue-500" to="/signup">
+                        Signup
+                    </Link>
+                    .
+                </small>
             </div>
         </div>
-    )
+    );
 }

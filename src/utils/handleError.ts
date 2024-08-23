@@ -1,9 +1,5 @@
 import { toast } from "sonner";
 
-// export const handleError = ({ error }: { error: { data: { message: string } } }) => {
-//     console.error(error.data.message);
-//     toast("Error: " + error.data.message);
-//   };
 
 interface ApiError {
     data?: {
@@ -26,5 +22,3 @@ export const handleError = (error: unknown) => {
         toast("Error: An unexpected error occurred");
     }
 };
-
-

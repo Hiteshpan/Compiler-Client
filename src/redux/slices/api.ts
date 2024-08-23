@@ -9,7 +9,8 @@ import {
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://codesoniyt.onrender.com",
+        // baseUrl: "https://codesoniyt.onrender.com",
+        baseUrl: import.meta.env.VITE_SERVER_URL,
         credentials: "include",
     }),
     tagTypes: ["myCodes", "allCodes"],

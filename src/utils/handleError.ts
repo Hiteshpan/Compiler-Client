@@ -20,5 +20,6 @@ export const handleError = (error: unknown) => {
     } else {
         console.error("An unexpected error occurred");
         toast("Error: An unexpected error occurred");
-    }
+
+    };
 };

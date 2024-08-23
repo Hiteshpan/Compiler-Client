@@ -4,6 +4,7 @@ import { toast } from "sonner";
 //     console.error(error.data.message);
 //     toast("Error: " + error.data.message);
 //   };
+
 interface ApiError {
     data?: {
         message?: string;

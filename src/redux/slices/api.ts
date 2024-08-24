@@ -56,7 +56,11 @@ export const api = createApi({
             }),
         }),
         getUserDetails: builder.query<userInfoType, void>({
-            query: () => ({ url: "/user/user-details", cache: "no-store" }),
+            query: () => ({
+                url: "/user/user-details",
+                method: "GET",
+                cache: "no-store"
+            }),
         }),
         getMyCodes: builder.query<Array<codeType>, void>({
             query: () => "/user/my-codes",

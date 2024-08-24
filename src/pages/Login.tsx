@@ -39,10 +39,8 @@ export default function Login() {
         try {
             const response = await login(values).unwrap();
 
-            if (response && response.token) {
-                localStorage.setItem('token', response.token); // Save token to local storage
-            } else {
-                console.error('Token is missing in the response');
+            if (response.token) {
+                localStorage.setItem('token', response.token);
             }
 
             dispatch(updateCurrentUser(response));

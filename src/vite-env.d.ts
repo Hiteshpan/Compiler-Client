@@ -4,6 +4,7 @@ import { CompilerSliceStateType } from "./redux/slices/compilerSlice";
 
 //users types
 interface userInfoType {
+    token: string;
     username: string;
     picture: string;
     email: string;

@@ -38,6 +38,13 @@ export default function Login() {
     async function handleLogin(values: z.infer<typeof formSchema>) {
         try {
             const response = await login(values).unwrap();
+
+            if (response && response.token) {
+                localStorage.setItem('token', response.token); // Save token to local storage
+            } else {
+                console.error('Token is missing in the response');
+            }
+
             dispatch(updateCurrentUser(response));
             dispatch(updateIsLoggedIn(true));
             navigate("/");
